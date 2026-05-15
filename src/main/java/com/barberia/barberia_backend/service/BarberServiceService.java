@@ -58,16 +58,22 @@ public class BarberServiceService {
         return BarberServiceResponse.fromEntity(updatedService);
     }
 
-    public void deactivate(Long id) {
+    public BarberServiceResponse deactivate(Long id) {
         BarberService service = getServiceById(id);
         service.setActive(false);
-        barberServiceRepository.save(service);
+
+        BarberService updatedService = barberServiceRepository.save(service);
+
+        return BarberServiceResponse.fromEntity(updatedService);
     }
 
-    public void activate(Long id) {
+    public BarberServiceResponse activate(Long id) {
         BarberService service = getServiceById(id);
         service.setActive(true);
-        barberServiceRepository.save(service);
+
+        BarberService updatedService = barberServiceRepository.save(service);
+
+        return BarberServiceResponse.fromEntity(updatedService);
     }
 
     private BarberService getServiceById(Long id) {

@@ -2,7 +2,11 @@ package com.barberia.barberia_backend.appointment;
 
 import com.barberia.barberia_backend.common.enums.AppointmentStatus;
 import com.barberia.barberia_backend.user.User;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -10,9 +14,7 @@ import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
-        List<Appointment> findByAppointmentDateAndStatus(
-                        LocalDate appointmentDate,
-                        AppointmentStatus status);
+        List<Appointment> findByAppointmentDateAndStatus(LocalDate appointmentDate, AppointmentStatus status);
 
         List<Appointment> findByUserOrderByAppointmentDateDescStartTimeDesc(User user);
 
@@ -23,4 +25,19 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
                         AppointmentStatus status,
                         LocalTime endTime,
                         LocalTime startTime);
+
+        @Lock(LockModeType.PESSIMISTIC_WRITE)
+        @Query("""
+                        select a
+                        from Appointment a
+                        where a.appointmentDate = :appointmentDate
+                          and a.status = :status
+                          and a.startTime < :endTime
+                          and a.endTime > :startTime
+                        """)
+        List<Appointment> findOverlappingAppointmentsForUpdate(
+                        @Param("appointmentDate") LocalDate appointmentDate,
+                        @Param("status") AppointmentStatus status,
+                        @Param("startTime") LocalTime startTime,
+                        @Param("endTime") LocalTime endTime);
 }

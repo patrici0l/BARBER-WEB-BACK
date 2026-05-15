@@ -6,6 +6,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.barberia.barberia_backend.config.TimeConfig;
+
 @Entity
 @Table(name = "services")
 @Getter
@@ -37,7 +39,7 @@ public class BarberService {
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now(TimeConfig.ZONE_ID);
 
         if (this.active == null) {
             this.active = true;

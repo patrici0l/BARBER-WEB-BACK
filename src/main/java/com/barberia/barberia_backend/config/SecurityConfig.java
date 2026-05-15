@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,6 +24,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -34,36 +36,30 @@ public class SecurityConfig {
                 return http
                                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                                 .csrf(csrf -> csrf.disable())
-
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
                                                 .requestMatchers(
                                                                 "/api/auth/**",
                                                                 "/api/health",
                                                                 "/api/services",
+                                                                "/api/services/**",
+                                                                "/api/products",
+                                                                "/api/products/**",
+                                                                "/api/business-hours",
                                                                 "/api/business-hours/**",
+                                                                "/api/availability",
                                                                 "/api/availability/**")
                                                 .permitAll()
-
-                                                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
                                                 .requestMatchers("/api/appointments/**").authenticated()
                                                 .requestMatchers("/api/my-appointments/**").authenticated()
-
                                                 .anyRequest().authenticated())
-
                                 .authenticationProvider(authenticationProvider())
-
                                 .addFilterBefore(
                                                 jwtAuthenticationFilter,
                                                 UsernamePasswordAuthenticationFilter.class)
-
                                 .build();
         }
 
@@ -71,9 +67,13 @@ public class SecurityConfig {
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
 
-                configuration.setAllowedOrigins(List.of(
+                // Actualizado según image_8f4d7d.png para soportar patrones de origen en
+                // despliegue
+                configuration.setAllowedOriginPatterns(List.of(
                                 "http://localhost:4200",
-                                "http://127.0.0.1:4200"));
+                                "http://127.0.0.1:4200",
+                                "https://*.vercel.app",
+                                "https://*.netlify.app"));
 
                 configuration.setAllowedMethods(List.of(
                                 "GET",
@@ -96,7 +96,7 @@ public class SecurityConfig {
                 configuration.setMaxAge(3600L);
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                source.registerCorsConfiguration("/api/**", configuration);
+                source.registerCorsConfiguration("/**", configuration);
 
                 return source;
         }
@@ -104,9 +104,7 @@ public class SecurityConfig {
         @Bean
         public AuthenticationProvider authenticationProvider() {
                 DaoAuthenticationProvider provider = new DaoAuthenticationProvider(customUserDetailsService);
-
                 provider.setPasswordEncoder(passwordEncoder());
-
                 return provider;
         }
 

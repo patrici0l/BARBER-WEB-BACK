@@ -30,26 +30,24 @@ public class BarberServiceController {
 
     @PostMapping("/admin/services")
     public BarberServiceResponse createService(
-            @Valid @RequestBody BarberServiceRequest request
-    ) {
+            @Valid @RequestBody BarberServiceRequest request) {
         return barberServiceService.create(request);
     }
 
     @PutMapping("/admin/services/{id}")
     public BarberServiceResponse updateService(
             @PathVariable Long id,
-            @Valid @RequestBody BarberServiceRequest request
-    ) {
+            @Valid @RequestBody BarberServiceRequest request) {
         return barberServiceService.update(id, request);
     }
 
     @PatchMapping("/admin/services/{id}/deactivate")
-    public void deactivateService(@PathVariable Long id) {
-        barberServiceService.deactivate(id);
+    public BarberServiceResponse deactivateService(@PathVariable Long id) {
+        return barberServiceService.deactivate(id);
     }
 
     @PatchMapping("/admin/services/{id}/activate")
-    public void activateService(@PathVariable Long id) {
-        barberServiceService.activate(id);
+    public BarberServiceResponse activateService(@PathVariable Long id) {
+        return barberServiceService.activate(id);
     }
 }
