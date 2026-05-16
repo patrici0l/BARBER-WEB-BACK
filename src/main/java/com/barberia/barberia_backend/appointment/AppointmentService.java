@@ -194,13 +194,14 @@ public class AppointmentService {
     }
 
     private void validateNoOverlapForCreate(LocalDate appointmentDate, LocalTime startTime, LocalTime endTime) {
-        List<Appointment> overlaps = appointmentRepository.findOverlappingAppointmentsForUpdate(
-                appointmentDate,
-                AppointmentStatus.BOOKED,
-                startTime,
-                endTime);
+        boolean existsOverlap = appointmentRepository
+                .existsByAppointmentDateAndStatusAndStartTimeLessThanAndEndTimeGreaterThan(
+                        appointmentDate,
+                        AppointmentStatus.BOOKED,
+                        endTime,
+                        startTime);
 
-        if (!overlaps.isEmpty()) {
+        if (existsOverlap) {
             throw new IllegalArgumentException("El horario seleccionado ya está ocupado por otra cita");
         }
     }

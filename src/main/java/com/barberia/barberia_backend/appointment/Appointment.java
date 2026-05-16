@@ -28,7 +28,7 @@ public class Appointment {
      * AppointmentResponse.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "client_id")
     private User user;
 
     /*
@@ -37,7 +37,7 @@ public class Appointment {
      * AppointmentResponse.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = false)
+    @JoinColumn(name = "service_id")
     private BarberService service;
 
     @Column(nullable = false)
