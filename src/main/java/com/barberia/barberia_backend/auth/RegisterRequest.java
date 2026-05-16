@@ -9,12 +9,13 @@ public record RegisterRequest(
         @NotBlank(message = "El nombre es obligatorio")
         String name,
 
-        @Email(message = "El correo no es válido")
+        @Email(message = "El correo no es valido")
         @NotBlank(message = "El correo es obligatorio")
         String email,
 
-        @Size(min = 6, message = "La contraseña debe tener mínimo 6 caracteres")
-        @NotBlank(message = "La contraseña es obligatoria")
-        String password
-) {
+        String phoneNumber,
+
+        @Size(min = 6, message = "La contrasena debe tener minimo 6 caracteres")
+        @NotBlank(message = "La contrasena es obligatoria")
+        String password) {
 }

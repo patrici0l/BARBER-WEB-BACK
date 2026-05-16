@@ -40,4 +40,27 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
                         @Param("status") AppointmentStatus status,
                         @Param("startTime") LocalTime startTime,
                         @Param("endTime") LocalTime endTime);
+
+        @Query("""
+                        select a
+                        from Appointment a
+                        join fetch a.user
+                        join fetch a.service
+                        where a.status = :status
+                          and (
+                                a.appointmentDate > :fromDate
+                                or (a.appointmentDate = :fromDate and a.startTime >= :fromTime)
+                              )
+                          and (
+                                a.appointmentDate < :toDate
+                                or (a.appointmentDate = :toDate and a.startTime <= :toTime)
+                              )
+                        order by a.appointmentDate asc, a.startTime asc
+                        """)
+        List<Appointment> findAppointmentsStartingBetween(
+                        @Param("status") AppointmentStatus status,
+                        @Param("fromDate") LocalDate fromDate,
+                        @Param("fromTime") LocalTime fromTime,
+                        @Param("toDate") LocalDate toDate,
+                        @Param("toTime") LocalTime toTime);
 }

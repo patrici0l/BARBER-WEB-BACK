@@ -21,14 +21,18 @@ public class EmailService {
     private String fromEmail;
 
     public void sendEmail(String to, String subject, String body) {
+        sendEmailWithResult(to, subject, body);
+    }
+
+    public DeliveryResult sendEmailWithResult(String to, String subject, String body) {
         if (!mailEnabled) {
-            log.info("Email desactivado. No se envió correo a: {}", to);
-            return;
+            log.info("Email desactivado. No se envio correo a: {}", to);
+            return DeliveryResult.skipped("Email desactivado por app.mail.enabled=false");
         }
 
         if (to == null || to.isBlank()) {
-            log.warn("No se puede enviar email porque el destinatario está vacío");
-            return;
+            log.warn("No se puede enviar email porque el destinatario esta vacio");
+            return DeliveryResult.skipped("Destinatario de email vacio");
         }
 
         try {
@@ -41,8 +45,10 @@ public class EmailService {
             javaMailSender.send(message);
 
             log.info("Email enviado correctamente a: {}", to);
+            return DeliveryResult.sent("Email enviado correctamente");
         } catch (Exception exception) {
             log.error("Error enviando email a {}: {}", to, exception.getMessage());
+            return DeliveryResult.failed(exception.getMessage());
         }
     }
 }
