@@ -33,6 +33,8 @@ public class BarberService {
     @Column(nullable = false)
     private Integer durationMinutes;
 
+    private String imageUrl;
+
     private Boolean active;
 
     private LocalDateTime createdAt;

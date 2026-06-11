@@ -20,6 +20,8 @@ public record BarberServiceRequest(
 
         @NotNull(message = "La duración es obligatoria")
         @Min(value = 5, message = "La duración mínima debe ser de 5 minutos")
-        Integer durationMinutes
+        Integer durationMinutes,
+
+        String imageUrl
 ) {
 }

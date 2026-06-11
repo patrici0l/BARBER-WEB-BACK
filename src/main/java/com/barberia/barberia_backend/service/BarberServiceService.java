@@ -37,6 +37,7 @@ public class BarberServiceService {
                 .description(request.description())
                 .price(request.price())
                 .durationMinutes(request.durationMinutes())
+                .imageUrl(cleanImageUrl(request.imageUrl()))
                 .active(true)
                 .build();
 
@@ -52,6 +53,7 @@ public class BarberServiceService {
         service.setDescription(request.description());
         service.setPrice(request.price());
         service.setDurationMinutes(request.durationMinutes());
+        service.setImageUrl(cleanImageUrl(request.imageUrl()));
 
         BarberService updatedService = barberServiceRepository.save(service);
 
@@ -79,5 +81,12 @@ public class BarberServiceService {
     private BarberService getServiceById(Long id) {
         return barberServiceRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Servicio no encontrado con id: " + id));
+    }
+
+    private String cleanImageUrl(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            return null;
+        }
+        return imageUrl.trim();
     }
 }

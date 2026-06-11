@@ -9,6 +9,7 @@ public record BarberServiceResponse(
         String description,
         BigDecimal price,
         Integer durationMinutes,
+        String imageUrl,
         Boolean active,
         LocalDateTime createdAt
 ) {
@@ -19,6 +20,7 @@ public record BarberServiceResponse(
                 service.getDescription(),
                 service.getPrice(),
                 service.getDurationMinutes(),
+                service.getImageUrl(),
                 service.getActive(),
                 service.getCreatedAt()
         );
